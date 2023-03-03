@@ -1,6 +1,23 @@
 from __future__ import annotations
 import datetime as dt
 
+class model_statics:
+    def __init__(
+        self,
+        forward_inflation_rate: float,
+        forward_market_rate: float,
+        working_number_years: int,
+        retirement_number_years: int,
+        contribution_increase_month: int,
+        annual_contribution_increase_rate: float,
+        ):
+        self.forward_inflation_rate = forward_inflation_rate
+        self.forward_market_rate = forward_market_rate
+        self.working_number_years = working_number_years
+        self.retirement_number_years = retirement_number_years
+        self.contribution_increase_month = contribution_increase_month
+        self.annual_contribution_increase_rate = annual_contribution_increase_rate
+
 def add_month(date: dt.date, nb_month: int = 1, set_day_to_one: bool = True):
     new_month = date.month + nb_month
     x_year = int((new_month - 1) / 12)
@@ -39,17 +56,21 @@ def simulate_pension_fund(
     month_id:                       int,
     current_amount:                 float,
     current_contribution:           float,
-    forward_inflation_rate:         float   = 0.02,
-    forward_market_growth:          float   = 0.03,
-    annual_contribution_increase:   float   = 0.05,
-    contribution_increase_month:    int     = 1,
-    number_of_working_years:        float   = 40,
+    statics:                        model_statics,
     ) -> list[_simulate_pension_struct]:
 
     res = [_simulate_pension_struct(month_id, add_month(start_date, month_id) , 1.0, 0, current_amount)]
-    while res[-1].month_id < number_of_working_years * 12:
+    while res[-1].month_id < statics.working_number_years * 12:
         new_contrib = res[-1].contribution if res[-1].contribution != 0 else current_contribution
-        new_contrib *= 1 + (annual_contribution_increase if add_month(res[-1].date).month == contribution_increase_month else 0)
-        res += [res[-1].get_next(forward_inflation_rate, new_contrib, forward_market_growth)]
+        new_contrib *= 1 + (statics.annual_contribution_increase_rate \
+            if add_month(res[-1].date).month == statics.contribution_increase_month else 0)
+        res += [res[-1].get_next(statics.forward_inflation_rate, new_contrib, statics.forward_market_rate)]
     return res
 
+def calculate_fix_pension_from_fund(
+    final_amount: float,
+    nb_retirement_years: int,
+    forward_market_growth: float,
+    ):
+    fwd_mkt_mthly = forward_market_growth / 12.0
+    return final_amount * fwd_mkt_mthly/(1 - (1 + fwd_mkt_mthly)**(-nb_retirement_years * 12))
