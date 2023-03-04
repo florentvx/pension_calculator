@@ -32,3 +32,10 @@ def calculate_national_insurance_tax(annual_gross_amount: float):
 def calculate_net_income(annual_gross_amount: float):
     return annual_gross_amount - calculate_income_tax(annual_gross_amount) - calculate_national_insurance_tax(annual_gross_amount)
 
+if __name__ == '__main__':
+    d = {
+        am*10: calculate_net_income(am * 10000) / 1000.0
+        for am in range(1, 25)
+    }
+    for (k,v) in d.items():
+        print(f"gross £ {k} K: year net: £ {round(v, 2)} K (monthly £ {round(v/12.0 * 1000)}) - tax rate: {round(100 * (1-v/k), 2)} %")
