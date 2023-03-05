@@ -9,5 +9,10 @@ statics = model_statics(**my_data["model_statics"])
 pension_data : dict = my_data['pension_data']
 
 res = get_pension_historical_summary(statics, pension_data)
+last_date = list(res.keys())[-1]
+same_inf = [
+    convert_price_with_inflation(my_data['historical_inflation'], res[date_k].pension_real, date_k, last_date)
+    for date_k in res
+]
 
 print("END")
