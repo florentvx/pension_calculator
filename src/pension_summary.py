@@ -5,7 +5,12 @@ from .pension_simulator import model_statics, simulate_pension_fund, calculate_f
 from .tax import calculate_net_income
 
 class summary_struct:
-    def __init__(self, statics: model_statics, final_amount: float, cpi: float):
+    def __init__(self, 
+    statics: model_statics, 
+    final_amount: float, 
+    cpi: float, 
+    historical_real_amounts: dict[dt.date, float],
+    ):        
         self.pension_gross = calculate_fix_pension_from_fund(
             final_amount, 
             statics.retirement_number_years, statics.forward_market_rate
@@ -14,6 +19,7 @@ class summary_struct:
         self.pension_real_net = calculate_net_income(12 * self.pension_real) / 12.0
         self.tax_rate = 1.0 - self.pension_real_net / self.pension_real
         self.pension_net = self.pension_gross * (1 - self.tax_rate)
+        self.historical_real_amounts = historical_real_amounts
 
 def get_pension_historical_summary(statics: model_statics, pension_data: dict):
     res : dict[dt.date, summary_struct] = {}
@@ -31,5 +37,6 @@ def get_pension_historical_summary(statics: model_statics, pension_data: dict):
             statics, 
             simulation_k[-1].amount, 
             simulation_k[-1].cpi,
+            {sim_k_mth.date: sim_k_mth.real_amount for sim_k_mth in simulation_k}
         )
     return res
