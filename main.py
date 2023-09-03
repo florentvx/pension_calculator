@@ -4,6 +4,12 @@ import yaml
 
 from src import *
 
+income_tax_df = calculate_income_tax(200000.0)
+ni_tax_df = calculate_national_insurance_tax(200000.0)
+all_taxes_df = calculate_all_taxes(200000)
+
+print("STOP")
+
 my_data_path = Path(r"C:\Users\flore\OneDrive\Documents\Diverse\pension\my_data.yaml")
 my_data = yaml.safe_load(open(my_data_path, 'r'))
 
