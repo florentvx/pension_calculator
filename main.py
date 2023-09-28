@@ -2,7 +2,7 @@ from pathlib import Path
 import yaml
 
 
-from src import *
+from src.pension_simulator import *
 
 income_tax_df = calculate_income_tax(200000.0)
 ni_tax_df = calculate_national_insurance_tax(200000.0)
