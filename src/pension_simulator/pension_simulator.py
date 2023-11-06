@@ -44,7 +44,7 @@ def add_month(date: dt.date, nb_month: int = 1, set_day_to_one: bool = True):
     x_month = new_month - x_year * 12
     return dt.date(date.year + x_year, max(1, x_month), 1 if set_day_to_one else date.day )
 
-class _simulate_pension_struct:
+class simulate_pension_struct:
     def __init__(self, month_id: int, date: dt.date, cpi: float, contribution:float, amount: float):
         self.month_id = month_id
         self.date = date
@@ -61,8 +61,8 @@ class _simulate_pension_struct:
         cpi_rate: float, 
         contribution: float, 
         forward_market_growth: float
-        ) -> _simulate_pension_struct:
-        return _simulate_pension_struct(
+        ) -> simulate_pension_struct:
+        return simulate_pension_struct(
             self.month_id + 1,
             add_month(self.date),
             self.cpi * (1 + cpi_rate / 12.0),
@@ -77,9 +77,9 @@ def simulate_pension_fund(
     current_amount:                 float,
     current_contribution:           float,
     statics:                        model_statics,
-    ) -> list[_simulate_pension_struct]:
+    ) -> list[simulate_pension_struct]:
 
-    res = [_simulate_pension_struct(month_id, add_month(start_date, month_id) , 1.0, 0, current_amount)]
+    res = [simulate_pension_struct(month_id, add_month(start_date, month_id) , 1.0, 0, current_amount)]
     while res[-1].month_id < statics.working_number_years * 12:
         new_contrib = res[-1].contribution if res[-1].contribution != 0 else current_contribution
         new_contrib *= 1 + (
