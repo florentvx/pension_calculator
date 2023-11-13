@@ -32,9 +32,12 @@ def plot_all(
     axis[1,0].set_title(f'pension total (last year)')
     axis[1,0].grid()
     
-    bx1 = np.arange(len(list(historical_inflation.values())))
-    bx2 = [bx1_k + 0.25 for bx1_k in bx1]
-    axis[1,1].bar(bx1, historical_inflation.values(), label="inflation", color='r', width=0.25)
+    hist_inf_val = list(historical_inflation.values())[:(-1)]
+    historical_inf_rate = [100.0 * (hist_inf_val[i+1]/hist_inf_val[i] - 1) for i in range(len(hist_inf_val) - 1)]
+    bx1 = list(np.arange(len(historical_inf_rate)))
+    bx2 = [bx1_k + 0.25 for bx1_k in bx1][:len(historical_inf_rate)]
+    
+    axis[1,1].bar(bx1, historical_inf_rate, label="inflation", color='r', width=0.25)
     axis[1,1].bar(bx2, historical_performance.values(), label="performance", color='b', width=0.25)
     plt.xticks(
         [r + 0.25 for r in range(len(list(historical_inflation.values())))],

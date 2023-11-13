@@ -1,16 +1,24 @@
 import datetime as dt
 from math import log, exp
 
+def _get_linest_inflation_index(data: dict, input_date: dt.date):
+    dates_before = [k for k in data.keys() if k <= input_date]
+    dates_after = [k for k in data.keys() if k >= input_date]
+    if len(dates_before) == 0:
+        raise ValueError(f"input date {input_date} before data start date {min(data.keys())}")
+    date_before = max(dates_before)
+    if len(dates_after) == 0:
+        dates_after = [k for k in data.keys() if k >= input_date - dt.timedelta(days=100)]
+        if len(date_after) == 0:
+            raise ValueError(f"input date {input_date} after data end date (-100 days) {max(data.keys())}")
+    date_after = min(dates_after)
+    if date_before == date_after:
+        return data[date_before]
+    w = 1 - (input_date - date_before) / (date_after - date_before)
+    return w * data[date_before] + (1 - w) * data[date_after]
+
 def get_inflation_conversion_rate(data: dict, input_date: dt.date, output_date: dt.date):
-    """dates are considered set to 31st Dec.
-        example: input: 2017, output: 2020 -> (1+inf(2018))*(1+inf(2019))*(1+inf(2020))
-    """
-    if (input_date.year == output_date.year):
-        return 1.0
-    if input_date.year > output_date.year:
-        return 1 / get_inflation_conversion_rate(data, output_date, input_date)
-    else:
-        return exp(sum([log(1 + data[y]/100.0) for y in range(input_date.year+1, output_date.year+1)]))
+    return _get_linest_inflation_index(data, output_date) / _get_linest_inflation_index(data, input_date)
             
 def convert_price_with_inflation(data: dict, input_price: float, input_date: dt.date, output_date: dt.date):
     return input_price * get_inflation_conversion_rate(data, input_date, output_date)

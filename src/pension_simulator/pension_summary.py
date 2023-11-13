@@ -1,7 +1,7 @@
 from __future__ import annotations
 import datetime as dt
 from .dates import date_string_to_date, get_month_id
-from .pension_simulator import model_statics, simulate_pension_fund, calculate_fix_pension_from_fund
+from . import model_statics, simulate_pension_fund, calculate_fix_pension_from_fund
 from .tax import calculate_net_income
 
 class summary_struct:
