@@ -11,7 +11,9 @@ def _get_linest_inflation_index(data: dict, input_date: dt.date):
         dates_after = [k for k in data.keys() if k >= input_date - dt.timedelta(days=100)]
         if len(dates_after) == 0:
             raise ValueError(f"input date {input_date} after data end date (-100 days) {max(data.keys())}")
-    date_after = min(dates_after)
+        date_after = max(dates_after)
+    else:
+        date_after = min(dates_after)
     if date_before == date_after:
         return data[date_before]
     w = 1 - (input_date - date_before) / (date_after - date_before)
