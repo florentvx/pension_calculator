@@ -24,7 +24,12 @@ TAX_HISTORICAL_PARAMETERS = {
     "2024-2025":{
         "personal_allowance":12570,
         "higher_rate_threshold":125140,
-        "higher_rate":10.0,
+        "higher_rate":8.0,
+    },
+    "2025-2026":{
+        "personal_allowance":12570,
+        "higher_rate_threshold":125140,
+        "higher_rate":8.0,
     },
 }
 
